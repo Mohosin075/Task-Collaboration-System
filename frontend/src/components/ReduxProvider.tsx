@@ -19,30 +19,21 @@ export default function ReduxProvider({ children }: { children: React.ReactNode 
   );
 }
 
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
+
 // Sub-component to dynamically sync dark mode with HTML tag classes
 function ThemeSynchronizer({ children }: { children: React.ReactNode }) {
+  const darkMode = useSelector((state: RootState) => state.theme.darkMode);
+
   useEffect(() => {
-    // Read state from redux store
-    const state = store.getState();
-    const isDark = state.theme.darkMode;
-    if (isDark) {
+    if (darkMode) {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
     }
-
-    // Subscribe to theme slice updates
-    const unsubscribe = store.subscribe(() => {
-      const isDarkUpdated = store.getState().theme.darkMode;
-      if (isDarkUpdated) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
+  }, [darkMode]);
 
   return <>{children}</>;
 }
+

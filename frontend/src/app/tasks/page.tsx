@@ -258,7 +258,7 @@ export default function TasksPage() {
         </div>
 
         {/* Filter panel */}
-        <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm space-y-4">
+        <div className="rounded-2xl border border-white/50 dark:border-slate-800/40 bg-white/60 dark:bg-slate-900/40 backdrop-blur-md p-6 shadow-xl shadow-slate-100/50 dark:shadow-none space-y-4">
           <div className="flex items-center gap-2 text-slate-800 dark:text-slate-200">
             <Filter className="h-5 w-5 text-indigo-500" />
             <h3 className="text-sm font-semibold uppercase tracking-wider">Search & Filters</h3>
@@ -389,7 +389,7 @@ export default function TasksPage() {
                 <div
                   key={task._id}
                   onClick={() => setActiveTaskForComments(task)}
-                  className="group relative rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow cursor-pointer"
+                  className="group relative rounded-2xl border border-white/50 dark:border-slate-800/40 bg-white/60 dark:bg-slate-900/40 backdrop-blur-md p-6 shadow-xl shadow-slate-100/50 dark:shadow-none flex flex-col justify-between hover:-translate-y-0.5 hover:shadow-2xl transition-all duration-300 cursor-pointer"
                 >
                   <div>
                     {/* Header: Project name, Action triggers */}
@@ -497,7 +497,7 @@ export default function TasksPage() {
         {/* Task Form Modal for Admin / PM CRUD */}
         {modalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm px-4">
-            <div className="w-full max-w-lg bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xl">
+            <div className="w-full max-w-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl rounded-2xl border border-white/50 dark:border-slate-800/40 overflow-hidden shadow-2xl">
               
               <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800">
                 <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">
@@ -623,7 +623,7 @@ export default function TasksPage() {
 
         {/* Task Discussion Sidebar Drawer */}
         {activeTaskForComments && (
-          <div className="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col justify-between">
+          <div className="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border-l border-white/40 dark:border-slate-800/30 shadow-2xl flex flex-col justify-between">
             
             <div>
               {/* Header drawer */}

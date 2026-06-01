@@ -66,10 +66,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100">
+    <div className="flex h-screen overflow-hidden bg-gradient-to-tr from-slate-100 via-indigo-50/10 to-slate-50 dark:from-slate-950 dark:via-indigo-950/5 dark:to-slate-950 text-slate-900 dark:text-slate-100">
       
       {/* Sidebar - Desktop */}
-      <aside className="hidden md:flex md:w-64 md:flex-col bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800">
+      <aside className="hidden md:flex md:w-64 md:flex-col bg-white/70 dark:bg-slate-900/60 backdrop-blur-lg border-r border-slate-200/60 dark:border-slate-800/50">
         <div className="flex h-16 items-center px-6 border-b border-slate-200 dark:border-slate-800">
           <Activity className="h-6 w-6 text-indigo-500 mr-2" />
           <span className="text-lg font-bold tracking-tight bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">Smart Work</span>
@@ -162,7 +162,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       <div className="flex flex-1 flex-col overflow-hidden">
         
         {/* Header toolbar */}
-        <header className="flex h-16 items-center justify-between px-6 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 z-10">
+        <header className="flex h-16 items-center justify-between px-6 bg-white/70 dark:bg-slate-900/60 backdrop-blur-lg border-b border-slate-200/60 dark:border-slate-800/50 z-10">
           
           {/* Mobile menu trigger */}
           <button onClick={() => setSidebarOpen(true)} className="p-2 -ml-2 text-slate-500 dark:text-slate-400 md:hidden cursor-pointer">
@@ -178,6 +178,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             
             {/* Theme toggle */}
             <button
+              id="theme-toggle"
               onClick={() => dispatch(toggleTheme())}
               className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800/80 cursor-pointer"
             >
@@ -197,7 +198,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         </header>
 
         {/* Viewport scrolling area */}
-        <main className="flex-1 overflow-y-auto p-6 md:p-8 bg-slate-50 dark:bg-slate-950">
+        <main className="flex-1 overflow-y-auto p-6 md:p-8">
           {children}
         </main>
       </div>
