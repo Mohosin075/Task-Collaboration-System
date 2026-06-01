@@ -69,40 +69,40 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 px-4 py-12 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
-      <div className="w-full max-w-md space-y-8 rounded-2xl border border-slate-700/30 bg-slate-900/60 p-8 shadow-2xl backdrop-blur-md">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-tr from-slate-100 via-indigo-50/10 to-slate-50 dark:from-slate-950 dark:via-indigo-950/5 dark:to-slate-950 text-slate-900 dark:text-slate-100 px-4 py-12">
+      <div className="w-full max-w-md space-y-8 rounded-2xl border border-white/50 dark:border-slate-800/40 bg-white/60 dark:bg-slate-900/45 p-8 shadow-2xl backdrop-blur-xl">
         
         {/* Title / Logo */}
         <div className="text-center">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-primary/20 text-primary">
-            <Activity className="h-7 w-7 text-indigo-400" />
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400">
+            <Activity className="h-7 w-7 text-indigo-500" />
           </div>
-          <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-white">Smart Collaboration</h2>
-          <p className="mt-2 text-sm text-slate-400">Sign in to manage projects and track tasks</p>
+          <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">Smart Collaboration</h2>
+          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Sign in to manage projects and track tasks</p>
         </div>
 
         {/* Login Form */}
         <form onSubmit={handleLogin} className="mt-8 space-y-6">
           <div className="space-y-4 rounded-md">
             <div>
-              <label className="block text-sm font-medium text-slate-300">Email Address</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Email Address</label>
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 block w-full rounded-lg border border-slate-700 bg-slate-800/50 px-4 py-2.5 text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="mt-1 block w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 px-4 py-2.5 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 placeholder="you@example.com"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-300">Password</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Password</label>
               <input
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="mt-1 block w-full rounded-lg border border-slate-700 bg-slate-800/50 px-4 py-2.5 text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="mt-1 block w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 px-4 py-2.5 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 placeholder="••••••••"
               />
             </div>
@@ -112,7 +112,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="group relative flex w-full justify-center rounded-lg bg-indigo-600 px-4 py-3 text-sm font-semibold text-white hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
+              className="group relative flex w-full justify-center rounded-xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 transition-all cursor-pointer shadow-md shadow-indigo-600/10"
             >
               {isLoading ? 'Signing In...' : 'Sign In'}
               <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
@@ -123,10 +123,10 @@ export default function LoginPage() {
         {/* Demo login buttons divider */}
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center" aria-hidden="true">
-            <div className="w-full border-t border-slate-800" />
+            <div className="w-full border-t border-slate-200 dark:border-slate-850" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-slate-900 px-3 py-1 rounded text-slate-400 font-semibold border border-slate-800">Or Demo Quick Sign In</span>
+            <span className="bg-slate-100 dark:bg-slate-900 px-3 py-1 rounded-xl text-slate-500 dark:text-slate-400 font-semibold border border-slate-200 dark:border-slate-800">Or Demo Quick Sign In</span>
           </div>
         </div>
 
@@ -134,21 +134,21 @@ export default function LoginPage() {
         <div className="grid grid-cols-3 gap-2">
           <button
             onClick={() => handleDemoLogin('admin@demo.com')}
-            className="flex flex-col items-center justify-center rounded-lg border border-slate-800 bg-slate-950/40 p-3 text-center text-xs font-semibold text-indigo-400 hover:bg-slate-800 hover:text-white transition-all cursor-pointer"
+            className="flex flex-col items-center justify-center rounded-xl border border-slate-200 dark:border-slate-850 bg-white/40 dark:bg-slate-950/40 p-3 text-center text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-slate-850 hover:text-indigo-700 dark:hover:text-white transition-all cursor-pointer"
           >
             <Shield className="mb-1 h-5 w-5" />
             Admin
           </button>
           <button
             onClick={() => handleDemoLogin('pm@demo.com')}
-            className="flex flex-col items-center justify-center rounded-lg border border-slate-800 bg-slate-950/40 p-3 text-center text-xs font-semibold text-emerald-400 hover:bg-slate-800 hover:text-white transition-all cursor-pointer"
+            className="flex flex-col items-center justify-center rounded-xl border border-slate-200 dark:border-slate-850 bg-white/40 dark:bg-slate-950/40 p-3 text-center text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-slate-850 hover:text-emerald-700 dark:hover:text-white transition-all cursor-pointer"
           >
             <Users className="mb-1 h-5 w-5" />
             Manager
           </button>
           <button
             onClick={() => handleDemoLogin('member1@demo.com')}
-            className="flex flex-col items-center justify-center rounded-lg border border-slate-800 bg-slate-950/40 p-3 text-center text-xs font-semibold text-amber-400 hover:bg-slate-800 hover:text-white transition-all cursor-pointer"
+            className="flex flex-col items-center justify-center rounded-xl border border-slate-200 dark:border-slate-850 bg-white/40 dark:bg-slate-950/40 p-3 text-center text-xs font-semibold text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-slate-850 hover:text-amber-700 dark:hover:text-white transition-all cursor-pointer"
           >
             <User className="mb-1 h-5 w-5" />
             Member
@@ -156,9 +156,9 @@ export default function LoginPage() {
         </div>
 
         {/* Redirect Link */}
-        <p className="mt-8 text-center text-sm text-slate-400">
+        <p className="mt-8 text-center text-sm text-slate-500 dark:text-slate-400">
           Don't have an account?{' '}
-          <Link href="/signup" className="font-semibold text-indigo-400 hover:underline">
+          <Link href="/signup" className="font-semibold text-indigo-600 dark:text-indigo-400 hover:underline">
             Sign Up
           </Link>
         </p>

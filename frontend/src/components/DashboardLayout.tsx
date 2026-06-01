@@ -85,7 +85,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 className={`flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all ${
                   active
                     ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold'
-                    : 'text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800/50 hover:text-slate-900'
+                    : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/50 dark:hover:text-slate-100'
                 }`}
               >
                 <Icon className="h-5 w-5 mr-3" />
@@ -112,7 +112,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       {/* Mobile Sidebar overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 z-40 flex md:hidden bg-slate-900/60 backdrop-blur-sm" onClick={() => setSidebarOpen(false)}>
-          <aside className="w-64 bg-white dark:bg-slate-900 h-full flex flex-col" onClick={(e) => e.stopPropagation()}>
+          <aside className="w-64 bg-white/80 dark:bg-slate-900/60 backdrop-blur-lg h-full flex flex-col" onClick={(e) => e.stopPropagation()}>
             <div className="flex h-16 items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800">
               <div className="flex items-center">
                 <Activity className="h-6 w-6 text-indigo-500 mr-2" />
@@ -134,7 +134,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                     className={`flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all ${
                       active
                         ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 font-semibold'
-                        : 'text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800/50 hover:text-slate-900'
+                        : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/50 dark:hover:text-slate-100'
                     }`}
                   >
                     <Icon className="h-5 w-5 mr-3" />

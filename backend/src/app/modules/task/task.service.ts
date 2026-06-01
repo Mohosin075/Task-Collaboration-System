@@ -86,8 +86,12 @@ const updateTask = async (
   const task = await Task.findById(id).populate('project', 'name');
   if (!task) throw new AppError(404, 'Task not found!');
 
-  // Role restriction: Team Members can ONLY update task status
+  // Role restriction: Team Members can ONLY update task status of their assigned tasks
   if (userRole === 'Team Member') {
+    const assignedId = task.assignedTo?._id?.toString() || task.assignedTo?.toString();
+    if (!assignedId || assignedId !== userId) {
+      throw new AppError(403, 'Team members are only allowed to update the status of their assigned tasks!');
+    }
     const allowedKeys = ['status'];
     const payloadKeys = Object.keys(payload);
     const isOnlyStatusUpdate = payloadKeys.every((key) => allowedKeys.includes(key));
