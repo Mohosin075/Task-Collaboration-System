@@ -32,13 +32,18 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const auth = useSelector((state: RootState) => state.auth);
   const darkMode = useSelector((state: RootState) => state.theme.darkMode);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Authenticate guard: redirect to /login if no session exists
   useEffect(() => {
-    if (!auth.token) {
+    if (mounted && !auth.token) {
       router.push('/login');
     }
-  }, [auth.token, router]);
+  }, [auth.token, router, mounted]);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -52,7 +57,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     { name: 'Team Workload', path: '/team', icon: Users2 },
   ];
 
-  if (!auth.token || !auth.user) {
+  if (!mounted || !auth.token || !auth.user) {
     return (
       <div className="flex h-screen items-center justify-center bg-slate-900 text-white">
         <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-indigo-500"></div>
