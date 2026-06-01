@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { logout } from '@/redux/slices/authSlice';
 import { toggleTheme } from '@/redux/slices/themeSlice';
@@ -20,6 +19,7 @@ import {
   Activity,
 } from 'lucide-react';
 import Link from 'next/link';
+import { useDispatch, useSelector } from 'react-redux';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
