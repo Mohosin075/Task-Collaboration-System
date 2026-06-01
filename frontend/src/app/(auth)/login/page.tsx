@@ -49,7 +49,7 @@ export default function LoginPage() {
     
     // Seed demo accounts first to make sure they exist
     try {
-      await seedDemo().unwrap();
+      await seedDemo(undefined).unwrap();
       
       const res = await login({ email: roleEmail, password: 'demo123456@Password' }).unwrap();
       dispatch(setCredentials({ token: res.data.accessToken, user: res.data.user }));
