@@ -11,7 +11,7 @@ export default function TeamWorkloadPage() {
   const auth = useSelector((state: RootState) => state.auth);
   
   // Fetch workload details
-  const { data: workloadRes, isLoading } = useGetWorkloadQuery(undefined);
+  const { data: workloadRes, isLoading } = useGetWorkloadQuery(undefined) as any;
 
   const isAuthorized = auth.user?.role === 'Admin' || auth.user?.role === 'Project Manager';
 

@@ -34,7 +34,7 @@ export default function LoginPage() {
     }
 
     try {
-      const res = await login({ email, password }).unwrap();
+      const res = (await login({ email, password }).unwrap()) as any;
       dispatch(setCredentials({ token: res.data.accessToken, user: res.data.user }));
       toast.success(`Welcome back, ${res.data.user.name}!`);
       router.push('/dashboard');
@@ -51,14 +51,14 @@ export default function LoginPage() {
     try {
       await seedDemo(undefined).unwrap();
       
-      const res = await login({ email: roleEmail, password: 'demo123456@Password' }).unwrap();
+      const res = (await login({ email: roleEmail, password: 'demo123456@Password' }).unwrap()) as any;
       dispatch(setCredentials({ token: res.data.accessToken, user: res.data.user }));
       toast.success(`Demo Login successful: Logged in as ${res.data.user.role}!`);
       router.push('/dashboard');
     } catch (err: any) {
       // Retry in case seeding fails but users already exist
       try {
-        const res = await login({ email: roleEmail, password: 'demo123456@Password' }).unwrap();
+        const res = (await login({ email: roleEmail, password: 'demo123456@Password' }).unwrap()) as any;
         dispatch(setCredentials({ token: res.data.accessToken, user: res.data.user }));
         toast.success(`Demo Login successful: Logged in as ${res.data.user.role}!`);
         router.push('/dashboard');

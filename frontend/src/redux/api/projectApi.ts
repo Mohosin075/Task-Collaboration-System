@@ -1,17 +1,17 @@
 import { baseApi } from './baseApi';
 
 export const projectApi = baseApi.injectEndpoints({
-  endpoints: (builder) => ({
+  endpoints: (builder: any) => ({
     getProjects: builder.query({
       query: () => '/projects',
       providesTags: ['Project'],
     }),
     getProjectById: builder.query({
-      query: (id) => `/projects/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Project', id }],
+      query: (id: any) => `/projects/${id}`,
+      providesTags: (result: any, error: any, id: any) => [{ type: 'Project', id }],
     }),
     createProject: builder.mutation({
-      query: (projectData) => ({
+      query: (projectData: any) => ({
         url: '/projects',
         method: 'POST',
         body: projectData,
@@ -19,15 +19,15 @@ export const projectApi = baseApi.injectEndpoints({
       invalidatesTags: ['Project', 'Activity'],
     }),
     updateProject: builder.mutation({
-      query: ({ id, ...patch }) => ({
+      query: ({ id, ...patch }: any) => ({
         url: `/projects/${id}`,
         method: 'PATCH',
         body: patch,
       }),
-      invalidatesTags: (result, error, { id }) => ['Project', { type: 'Project', id }, 'Activity'],
+      invalidatesTags: (result: any, error: any, { id }: any) => ['Project', { type: 'Project', id }, 'Activity'],
     }),
     deleteProject: builder.mutation({
-      query: ({ id, userName }) => ({
+      query: ({ id, userName }: any) => ({
         url: `/projects/${id}?userName=${encodeURIComponent(userName)}`,
         method: 'DELETE',
       }),

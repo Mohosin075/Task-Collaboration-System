@@ -27,8 +27,8 @@ import {
 
 export default function ProjectsPage() {
   const auth = useSelector((state: RootState) => state.auth);
-  const { data: projectsRes, isLoading } = useGetProjectsQuery(undefined);
-  const { data: teamRes } = useGetTeamMembersQuery(undefined);
+  const { data: projectsRes, isLoading } = useGetProjectsQuery(undefined) as any;
+  const { data: teamRes } = useGetTeamMembersQuery(undefined) as any;
   
   const [createProject, { isLoading: isCreating }] = useCreateProjectMutation();
   const [updateProject, { isLoading: isUpdating }] = useUpdateProjectMutation();

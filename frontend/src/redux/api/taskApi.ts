@@ -1,9 +1,9 @@
 import { baseApi } from './baseApi';
 
 export const taskApi = baseApi.injectEndpoints({
-  endpoints: (builder) => ({
+  endpoints: (builder: any) => ({
     getTasks: builder.query({
-      query: (params) => ({
+      query: (params: any) => ({
         url: '/tasks',
         method: 'GET',
         params,
@@ -11,7 +11,7 @@ export const taskApi = baseApi.injectEndpoints({
       providesTags: ['Task'],
     }),
     createTask: builder.mutation({
-      query: (taskData) => ({
+      query: (taskData: any) => ({
         url: '/tasks',
         method: 'POST',
         body: taskData,
@@ -19,7 +19,7 @@ export const taskApi = baseApi.injectEndpoints({
       invalidatesTags: ['Task', 'Activity'],
     }),
     updateTask: builder.mutation({
-      query: ({ id, ...patch }) => ({
+      query: ({ id, ...patch }: any) => ({
         url: `/tasks/${id}`,
         method: 'PATCH',
         body: patch,
@@ -27,18 +27,18 @@ export const taskApi = baseApi.injectEndpoints({
       invalidatesTags: ['Task', 'Activity'],
     }),
     deleteTask: builder.mutation({
-      query: ({ id, userName }) => ({
+      query: ({ id, userName }: any) => ({
         url: `/tasks/${id}?userName=${encodeURIComponent(userName)}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Task', 'Activity'],
     }),
     getComments: builder.query({
-      query: (taskId) => `/comments/${taskId}`,
+      query: (taskId: any) => `/comments/${taskId}`,
       providesTags: ['Comment'],
     }),
     addComment: builder.mutation({
-      query: (commentData) => ({
+      query: (commentData: any) => ({
         url: '/comments',
         method: 'POST',
         body: commentData,

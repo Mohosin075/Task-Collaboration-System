@@ -97,8 +97,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               <User className="h-5 w-5" />
             </div>
             <div className="flex-1 overflow-hidden">
-              <h4 className="text-sm font-semibold truncate">{auth.user.name}</h4>
-              <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{auth.user.role}</p>
+              <h4 className="text-sm font-semibold truncate">{auth.user?.name}</h4>
+              <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{auth.user?.role}</p>
             </div>
           </div>
         </div>
@@ -144,8 +144,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                   <User className="h-5 w-5" />
                 </div>
                 <div className="flex-1 overflow-hidden">
-                  <h4 className="text-sm font-semibold truncate">{auth.user.name}</h4>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{auth.user.role}</p>
+                  <h4 className="text-sm font-semibold truncate">{auth.user?.name}</h4>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{auth.user?.role}</p>
                 </div>
               </div>
             </div>
@@ -165,7 +165,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           </button>
           
           <div className="hidden md:flex text-sm text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider">
-            Workspace: {auth.user.role} Shell
+            Workspace: {auth.user?.role} Shell
           </div>
           
           {/* Toolbar Actions */}

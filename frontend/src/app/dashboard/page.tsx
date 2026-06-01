@@ -34,9 +34,9 @@ import { io } from 'socket.io-client';
 const COLORS = ['#6366f1', '#10b981', '#f59e0b']; // Indigo, Emerald, Amber
 
 export default function DashboardPage() {
-  const { data: projectsRes, isLoading: projectsLoading } = useGetProjectsQuery(undefined);
-  const { data: tasksRes, isLoading: tasksLoading } = useGetTasksQuery(undefined);
-  const { data: activitiesRes, isLoading: activitiesLoading } = useGetActivitiesQuery(undefined);
+  const { data: projectsRes, isLoading: projectsLoading } = useGetProjectsQuery(undefined) as any;
+  const { data: tasksRes, isLoading: tasksLoading } = useGetTasksQuery(undefined) as any;
+  const { data: activitiesRes, isLoading: activitiesLoading } = useGetActivitiesQuery(undefined) as any;
 
   const [liveActivities, setLiveActivities] = useState<any[]>([]);
 

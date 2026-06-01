@@ -65,10 +65,10 @@ export default function TasksPage() {
     order,
     page,
     limit: 50,
-  });
+  }) as any;
 
-  const { data: projectsRes } = useGetProjectsQuery(undefined);
-  const { data: teamRes } = useGetTeamMembersQuery(undefined);
+  const { data: projectsRes } = useGetProjectsQuery(undefined) as any;
+  const { data: teamRes } = useGetTeamMembersQuery(undefined) as any;
 
   const [createTask, { isLoading: isCreating }] = useCreateTaskMutation();
   const [updateTask, { isLoading: isUpdating }] = useUpdateTaskMutation();
@@ -80,7 +80,7 @@ export default function TasksPage() {
   const { data: commentsRes, refetch: refetchComments } = useGetCommentsQuery(
     activeTaskForComments?._id,
     { skip: !activeTaskForComments }
-  );
+  ) as any;
   const [addComment, { isLoading: isAddingComment }] = useAddCommentMutation();
 
   // Form Modals
