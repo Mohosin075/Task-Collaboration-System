@@ -4,6 +4,8 @@ An enterprise-grade, real-time full-stack collaborative platform designed to str
 
 ---
 
+### LIVE : http://195.35.6.13:4005/
+
 ## 🛠️ Architecture & Technology Stack
 
 | Layer | Technologies & Tools | Key Role / Responsibility |
