@@ -1,64 +1,79 @@
 # 🚀 Smart Project & Task Collaboration System
 
-An enterprise-grade, real-time full-stack **Smart Project & Task Collaboration System** built with **Next.js 15**, **Express.js (TypeScript)**, **Mongoose**, **Socket.IO**, and **Redux Toolkit (RTK Query)**. Features strict workspace permission logic, real-time activity auditing, robust data schema validations, and advanced SVG charts.
+An enterprise-grade, real-time full-stack collaborative platform designed to streamline project tracking, task execution, and team resource allocation. Built with a component-first architecture using Next.js 15, Node/Express (TypeScript), Mongoose, Socket.IO, and Redux Toolkit.
 
 ---
 
-## 🏗️ Architecture & Technology Stack
+## 🛠️ Architecture & Technology Stack
 
-### Backend (Express + TypeScript)
-- **Runtime**: Node.js with strict TypeScript compilation.
-- **Database**: MongoDB via Mongoose Object Modeling.
-- **Real-Time Communication**: Socket.IO for comments and state change broadcasts.
-- **Validation**: Zod Schemas for request payload validation.
-- **Security**: Cryptographic salting (`bcrypt`) and JSON Web Token (`JWT`) authentication.
-- **Testing**: Automated Integration Tests with `Jest` & `Supertest`.
-
-### Frontend (Next.js 15 Component-First Architecture)
-- **Framework**: React 19 & Next.js 15 (App Router).
-- **State Management**: Redux Toolkit (RTK Query) for API caching and Redux Persist for session caching.
-- **Styling**: Modern TailwindCSS with built-in Dark/Light theme toggle persistence.
-- **UI Elements**: Lucide React Icons & custom glassmorphic interfaces.
-- **Charts**: Recharts SVG engine for analytics rendering.
-- **Refactoring & Componentization**: Fully decoupled, modular layout architecture designed for maximum reusability and isolated state management.
+| Layer | Technologies & Tools | Key Role / Responsibility |
+| :--- | :--- | :--- |
+| **Frontend** | React 19, Next.js 15 (App Router), TailwindCSS | Responsive layout, modern aesthetics, state insulation |
+| **State Management** | Redux Toolkit (RTK Query), Redux Persist | Global client caching, auto-fetching, and persisted session states |
+| **Backend** | Express.js, TypeScript, Node.js | Strict-typed robust RESTful API endpoints and WebSocket gateway |
+| **Database** | MongoDB, Mongoose ORM | Strict document schema verification and relational population |
+| **Real-Time** | Socket.IO, Socket.IO-Client | Dynamic activity audit streaming and task comment synchronization |
+| **Verification & Security** | Zod, BCrypt, JWT | Request body payload validation, pw hashing, auth guards |
+| **Testing** | Jest, Supertest | Full backend API route and RBAC integration tests |
 
 ---
 
-## 💎 Frontend Component-First Design System
+## 🔑 Role-Based Access Control (RBAC) Matrix
 
-We refactored monolithic Next.js pages into modular, atomic, and state-insulated reusable UI components under `src/components/`:
-
-### 📁 Shared Layout Hierarchy
-- **Auth Nested Layout (`(auth)/layout.tsx`)**: Unifies background gradients, card borders, typography, and glassmorphic blurs across `/login` and `/signup` pages, reducing HTML wrapper boilerplate code.
-- **Dashboard Layout (`DashboardLayout.tsx`)**: Houses the application shell, sidebar navigation, dark/light theme switcher, and responsive grid container.
-
-### 🧩 Reusable Presentation & Domain Components
-- **`Avatar.tsx`**: Standardized initials-based profile rendering with user-centric sizing, gradients, and fallback defaults.
-- **`TaskCard.tsx` / `TaskKanbanCard.tsx`**: Handles grid, list, and drag-and-drop kanban layouts. Supports RBAC status selection dropdowns and action buttons based on user permissions.
-- **`ProjectCard.tsx`**: Renders project detail cards, team member avatars, and completion progress bars calculated directly from tasks data.
-- **`TaskModal.tsx` / `ProjectModal.tsx`**: Encapsulates React state forms, date selectors, input validations, file uploads, subtask checklist builders, and RTK Query mutation actions.
-- **`TaskDrawer.tsx`**: A right-aligned discussion drawer for task overviews and comments. It initializes standalone, real-time Socket.IO room subscriptions to update the feed on incoming comments instantly.
+| Feature | Admin | Project Manager | Team Member |
+| :--- | :---: | :---: | :---: |
+| **Create / Delete Projects** | ✅ Yes | ✅ Yes | ❌ No (403 Forbidden) |
+| **Edit Project Metadata** | ✅ Yes | ✅ Yes | ❌ No (403 Forbidden) |
+| **Assign Tasks to Members** | ✅ Yes | ✅ Yes | ❌ No (403 Forbidden) |
+| **Update Any Task Status** | ✅ Yes | ✅ Yes | ❌ No |
+| **Update Assigned Task Status** | ✅ Yes | ✅ Yes | ✅ Yes |
+| **Add / Read Task Comments** | ✅ Yes | ✅ Yes | ✅ Yes |
+| **View Analytics & Workloads** | ✅ Yes | ✅ Yes | ⚠️ Roster View Only |
 
 ---
 
-## ✨ Primary Workspace Features
+## ✨ Core Features Checklist
 
-### 🔐 1. Strict Role-Based Access Control (RBAC)
-The platform divides permissions into three distinct user roles:
-- **Admin**: Full access. Can create/delete projects, manage tasks, comment, and inspect workloads.
-- **Project Manager**: Workspace management. Can CRUD projects, assign tasks to members, and participate in discussion threads.
-- **Team Member**: Task execution. Restricted to updating the status of tasks assigned to them and posting discussion messages. Attempts to mutate projects are blocked with a `403 Forbidden` error.
+### 🔒 1. Authentication & Security
+- [x] **Secure Auth**: JWT token storage with authorization headers and bcrypt credentials security.
+- [x] **Nested Auth Layout**: Unified login/signup wrapper styling with smooth glassmorphism.
+- [x] **Demo Login Suite**: Single-click logins to test **Admin**, **Project Manager**, and **Member** perspectives instantly.
 
-### 📅 2. Strict Task Business Validation Rules
-- **Past Date Block**: Real-time checking blocks creating or editing tasks with due dates in the past.
-- **Duplicate Task Prevention**: Two tasks with the identical title cannot exist simultaneously within the same project.
-- **Status Freeze**: A task marked as `Completed` cannot be reassigned to other members unless its status is actively rolled back to pending.
+### 📁 2. Project & Workspace Management
+- [x] **Full CRUD operations**: Create, read, update, and delete workspace projects.
+- [x] **Resource Allocation**: Assign multiple workspace members to individual projects.
+- [x] **Visual Indicators**: Real-time progress percentage bar, dynamic member tags, and deadline markers.
 
-### 📊 3. Interactive Analytical Dashboards
-- **Project Completion & Progress Trends**: Area chart calculating the weight of completed tasks per project over time.
-- **Priority Distribution**: Vertical bar chart highlighting workload criticality (High, Medium, Low).
-- **Task Status Spread**: Interactive donut chart detailing completed vs. pending tasks.
-- **Audit Feed**: Real-time scrollable logging showing recent events, backed by Socket.IO.
+### 📅 3. Task Management & Advanced Workflow Rules
+- [x] **Double-Layout Support**: Instantly toggle between **List Grid View** and **Kanban Board** with drag-and-drop status changes.
+- [x] **Double-Title Prevention**: Tasks within the same project cannot share identical names.
+- [x] **Anti-Past Due Validation**: Task creation or edits with past deadlines are strictly blocked.
+- [x] **Task Claiming**: Team Members can quickly self-assign unallocated tasks to themselves.
+
+### 📊 4. Interactive Insights & Analytics
+- [x] **KPI Counters**: Highlight Total Projects, Active Tasks, Pending, Completed, and Overdue tasks.
+- [x] **Visual Charts**: Interactive Recharts SVG engines including:
+  - *Task Status Distribution* (Donut Chart)
+  - *Task Count by Priority* (Bar Chart)
+  - *Project Progress Trends* (Area Chart)
+- [x] **Real-time Audit Logs**: Active notification feed logging user operations via Socket.IO broadcasts.
+
+### 📎 5. Advanced Productivity Add-ons
+- [x] **Custom DatePicker**: Polished custom input component replacing stock browser calendar elements.
+- [x] **Native File Attachments**: Multi-format attachment uploads powered by custom Multer local disk storage.
+- [x] **Dark / Light Mode**: Unified styling with auto-detect and local storage persistent dark theme.
+
+---
+
+## 🧩 Frontend Component-First Design
+
+To optimize code reuse and decrease compilation overhead, the monolithic client page structures were separated into isolated state components in `src/components/`:
+
+*   `Avatar.tsx`: Standardized initials-based profile rendering with user-centric gradients.
+*   `TaskCard.tsx` / `TaskKanbanCard.tsx`: Insulates local drag-and-drop actions, status selection, and RBAC actions.
+*   `ProjectCard.tsx`: Standardized card representing project metrics and completion weights.
+*   `TaskModal.tsx` / `ProjectModal.tsx`: Encapsulates validation states, checklist managers, file upload nodes, and mutations.
+*   `TaskDrawer.tsx`: Encapsulates Socket.IO comments subscription, separating live discussion sockets from main page loads.
 
 ---
 
@@ -88,7 +103,7 @@ The platform divides permissions into three distinct user roles:
 │   ├── tsconfig.json          # TS config for bundler
 │   └── package.json
 │
-└── .gitignore                 # Root level ignore file
+└── README.md                  # Project Documentation
 ```
 
 ---
@@ -100,20 +115,21 @@ Ensure you have **Node.js (v18+)** and a running **MongoDB** instance (local or 
 
 ### 1. Configure the Backend
 1. Navigate to `/backend`.
-2. Create `.env` from `.env.example`:
+2. Create `.env` file matching `.env.example`:
    ```env
    PORT=5000
    MONGO_URI=mongodb://127.0.0.1:27017/smart-collaboration
    JWT_SECRET=supersecrettokenkey123!@#
    JWT_EXPIRES_IN=7d
    ```
-3. Install packages & start development server:
+3. Run installation and start service:
    ```bash
    npm install
    npm run dev
    ```
 
 ### 2. Run Backend Integration Tests
+Validate code business rules, models, and validations:
 ```bash
 cd backend
 npm run test
@@ -121,9 +137,21 @@ npm run test
 
 ### 3. Configure the Frontend
 1. Navigate to `/frontend`.
-2. Install packages & start Next.js application:
+2. Install packages & start development client:
    ```bash
    npm install
    npm run dev
    ```
-3. Open [http://localhost:3000](http://localhost:3000) in your browser. Use the **Quick Sign-in** panel to experience the platform with preloaded demo roles!
+3. Open [http://localhost:3000](http://localhost:3000) in your web browser.
+
+---
+
+## 👥 Preloaded Demo Credentials
+
+Use the **Quick Sign-in** grid buttons on the login page, or manually log in using the credentials below:
+
+| Role | Username / Email | Password | Access Level |
+| :--- | :--- | :--- | :--- |
+| **Admin** | `[EMAIL_ADDRESS]` | `admin123` | Full workspace permissions |
+| **Project Manager** | `[EMAIL_ADDRESS]` | `pm123` | Create and assign tasks / projects |
+| **Team Member** | `[EMAIL_ADDRESS]` | `member123` | Work on assigned tasks and update status |
