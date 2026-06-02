@@ -134,21 +134,21 @@ export default function LoginPage() {
         <div className="grid grid-cols-3 gap-2">
           <button
             onClick={() => handleDemoLogin('admin@demo.com')}
-            className="flex flex-col items-center justify-center rounded-xl border border-slate-200 dark:border-slate-850 bg-white/40 dark:bg-slate-950/40 p-3 text-center text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-slate-850 hover:text-indigo-700 dark:hover:text-white transition-all cursor-pointer"
+            className="flex flex-col items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 bg-white/40 dark:bg-slate-950/40 p-3 text-center text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 hover:border-indigo-200 dark:hover:bg-indigo-950/40 dark:hover:border-indigo-800 hover:text-indigo-700 dark:hover:text-indigo-300 transition-all cursor-pointer"
           >
             <Shield className="mb-1 h-5 w-5" />
             Admin
           </button>
           <button
             onClick={() => handleDemoLogin('pm@demo.com')}
-            className="flex flex-col items-center justify-center rounded-xl border border-slate-200 dark:border-slate-850 bg-white/40 dark:bg-slate-950/40 p-3 text-center text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-slate-850 hover:text-emerald-700 dark:hover:text-white transition-all cursor-pointer"
+            className="flex flex-col items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 bg-white/40 dark:bg-slate-950/40 p-3 text-center text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 hover:border-emerald-200 dark:hover:bg-emerald-950/40 dark:hover:border-emerald-800 hover:text-emerald-700 dark:hover:text-emerald-300 transition-all cursor-pointer"
           >
             <Users className="mb-1 h-5 w-5" />
             Manager
           </button>
           <button
             onClick={() => handleDemoLogin('member1@demo.com')}
-            className="flex flex-col items-center justify-center rounded-xl border border-slate-200 dark:border-slate-850 bg-white/40 dark:bg-slate-950/40 p-3 text-center text-xs font-semibold text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-slate-850 hover:text-amber-700 dark:hover:text-white transition-all cursor-pointer"
+            className="flex flex-col items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 bg-white/40 dark:bg-slate-950/40 p-3 text-center text-xs font-semibold text-amber-600 dark:text-amber-400 hover:bg-amber-50 hover:border-amber-200 dark:hover:bg-amber-950/40 dark:hover:border-amber-800 hover:text-amber-700 dark:hover:text-amber-300 transition-all cursor-pointer"
           >
             <User className="mb-1 h-5 w-5" />
             Member

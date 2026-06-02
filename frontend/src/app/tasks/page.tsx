@@ -406,7 +406,7 @@ export default function TasksPage() {
                           onChange={(e) => handleQuickStatusUpdate(task, e.target.value)}
                           className={`px-2 py-1 text-[10px] font-bold rounded-lg border transition-all ${
                             auth.user?.role === 'Team Member' && task.assignedTo?._id !== auth.user?._id && task.assignedTo !== auth.user?._id
-                              ? 'opacity-65 cursor-not-allowed bg-slate-100 dark:bg-slate-800/40 text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-850'
+                              ? 'opacity-65 cursor-not-allowed bg-slate-100 dark:bg-slate-800/40 text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-800'
                               : 'cursor-pointer ' + (
                                 task.status === 'Todo'
                                   ? 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 border-indigo-200/50'
