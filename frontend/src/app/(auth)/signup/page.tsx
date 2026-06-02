@@ -89,9 +89,9 @@ export default function SignupPage() {
                 onChange={(e: any) => setRole(e.target.value)}
                 className="mt-1 block w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 text-slate-700 dark:text-slate-300 px-4 py-2.5 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
               >
-                <option value="Team Member">Team Member (Task Updates Only)</option>
-                <option value="Project Manager">Project Manager (CRUD Projects & Assign Tasks)</option>
-                <option value="Admin">Admin (Full Workspace Access)</option>
+                <option value="Team Member">Team Member</option>
+                <option value="Project Manager">Project Manager</option>
+                <option value="Admin">Admin</option>
               </select>
             </div>
           </div>

@@ -52,6 +52,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   useEffect(() => {
     if (activitiesRes?.data) {
       setNotifications(activitiesRes.data);
+      setUnreadCount(activitiesRes.data.length);
     }
   }, [activitiesRes]);
 

@@ -67,7 +67,7 @@ export default function TeamWorkloadPage() {
           </div>
         ) : isAuthorized ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {workload.map((member: any) => {
+             {workload.map((member: any) => {
               const workloadPercentage = member.totalTasks > 0
                 ? Math.round((member.completedTasks / member.totalTasks) * 100)
                 : 0;
@@ -86,8 +86,15 @@ export default function TeamWorkloadPage() {
                       <Users2 className="h-4.5 w-4.5 text-indigo-500" />
                     </div>
 
-                    <h3 className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{member.name}</h3>
-                    <p className="text-xs text-slate-400 mt-1 truncate">{member.email}</p>
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-sm font-bold text-white shadow-md shadow-indigo-500/20">
+                        {member.name.substring(0, 2).toUpperCase()}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 truncate">{member.name}</h3>
+                        <p className="text-xs text-slate-400 truncate">{member.email}</p>
+                      </div>
+                    </div>
                   </div>
 
                   {/* Task counts summary */}
@@ -143,8 +150,15 @@ export default function TeamWorkloadPage() {
                     <Users2 className="h-4.5 w-4.5 text-indigo-500" />
                   </div>
 
-                  <h3 className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{member.name}</h3>
-                  <p className="text-xs text-slate-400 mt-1 truncate">{member.email}</p>
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-sm font-bold text-white shadow-md shadow-indigo-500/20">
+                      {member.name.substring(0, 2).toUpperCase()}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 truncate">{member.name}</h3>
+                      <p className="text-xs text-slate-400 truncate">{member.email}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}

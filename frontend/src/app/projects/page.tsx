@@ -314,13 +314,16 @@ export default function ProjectsPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Deadline</label>
-                    <input
-                      type="date"
-                      required
-                      value={deadline}
-                      onChange={(e) => setDeadline(e.target.value)}
-                      className="mt-1 block w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 text-slate-700 dark:text-slate-300"
-                    />
+                    <div className="relative mt-1">
+                      <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                      <input
+                        type="date"
+                        required
+                        value={deadline}
+                        onChange={(e) => setDeadline(e.target.value)}
+                        className="block w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 text-slate-700 dark:text-slate-300 transition-all cursor-pointer"
+                      />
+                    </div>
                     <div className="flex gap-1.5 mt-2 flex-wrap">
                       <button
                         type="button"
