@@ -5,7 +5,8 @@ import DashboardLayout from '@/components/DashboardLayout';
 import { useGetWorkloadQuery, useGetTeamMembersQuery } from '@/redux/api/authApi';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
-import { Users2, CheckCircle2, AlertCircle, HelpCircle, Layers } from 'lucide-react';
+import { Users2, AlertCircle } from 'lucide-react';
+import Avatar from '@/components/Avatar';
 
 export default function TeamWorkloadPage() {
   const auth = useSelector((state: RootState) => state.auth);
@@ -42,7 +43,7 @@ export default function TeamWorkloadPage() {
 
         {/* Load Status message */}
         {!isAuthorized && (
-          <div className="rounded-2xl border border-blue-200 bg-blue-50/50 dark:border-blue-900/30 dark:bg-blue-950/20 p-4 flex gap-3 text-sm text-blue-700 dark:text-blue-400">
+          <div className="rounded-2xl border border-blue-200 bg-blue-50/50 dark:border-blue-900/30 dark:bg-blue-950/20 p-4 flex gap-3 text-sm text-blue-700 dark:text-blue-400 animate-in fade-in duration-200">
             <AlertCircle className="h-5 w-5 shrink-0" />
             <p className="leading-relaxed">
               <strong>Access Info:</strong> Team members can view the workspace roster. Granular analytical reports are restricted to Administrators and Project Managers.
@@ -54,13 +55,13 @@ export default function TeamWorkloadPage() {
         {isLoading ? (
           <div className="text-center py-12 text-slate-500">Loading Team Data...</div>
         ) : isAuthorized && workload.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 p-12 text-center bg-white dark:bg-slate-900">
+          <div className="rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 p-12 text-center bg-white dark:bg-slate-900 animate-in fade-in duration-200">
             <Users2 className="mx-auto h-12 w-12 text-slate-400" />
             <h3 className="mt-4 text-lg font-bold">No active workload</h3>
             <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Add tasks and assign members to view workload metrics.</p>
           </div>
         ) : !isAuthorized && team.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 p-12 text-center bg-white dark:bg-slate-900">
+          <div className="rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 p-12 text-center bg-white dark:bg-slate-900 animate-in fade-in duration-200">
             <Users2 className="mx-auto h-12 w-12 text-slate-400" />
             <h3 className="mt-4 text-lg font-bold">No team members found</h3>
             <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">There are no team members in the roster.</p>
@@ -75,7 +76,7 @@ export default function TeamWorkloadPage() {
               return (
                 <div
                   key={member._id}
-                  className="rounded-2xl border border-white/50 dark:border-slate-800/40 bg-white/60 dark:bg-slate-900/40 backdrop-blur-md p-6 shadow-xl shadow-slate-100/50 dark:shadow-none flex flex-col justify-between hover:-translate-y-0.5 hover:shadow-2xl transition-all duration-300"
+                  className="rounded-2xl border border-white/50 dark:border-slate-800/40 bg-white/60 dark:bg-slate-900/40 backdrop-blur-md p-6 shadow-xl shadow-slate-100/50 dark:shadow-none flex flex-col justify-between hover:-translate-y-0.5 hover:shadow-2xl transition-all duration-300 animate-in fade-in duration-200"
                 >
                   <div>
                     {/* Role Tag & Name */}
@@ -87,9 +88,7 @@ export default function TeamWorkloadPage() {
                     </div>
 
                     <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-sm font-bold text-white shadow-md shadow-indigo-500/20">
-                        {member.name.substring(0, 2).toUpperCase()}
-                      </div>
+                      <Avatar name={member.name} size="xl" className="shadow-md shadow-indigo-500/20" />
                       <div className="min-w-0 flex-1">
                         <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 truncate">{member.name}</h3>
                         <p className="text-xs text-slate-400 truncate">{member.email}</p>
@@ -139,7 +138,7 @@ export default function TeamWorkloadPage() {
             {team.map((member: any) => (
               <div
                 key={member._id}
-                className="rounded-2xl border border-white/50 dark:border-slate-800/40 bg-white/60 dark:bg-slate-900/40 backdrop-blur-md p-6 shadow-xl shadow-slate-100/50 dark:shadow-none flex flex-col justify-between hover:-translate-y-0.5 hover:shadow-2xl transition-all duration-300"
+                className="rounded-2xl border border-white/50 dark:border-slate-800/40 bg-white/60 dark:bg-slate-900/40 backdrop-blur-md p-6 shadow-xl shadow-slate-100/50 dark:shadow-none flex flex-col justify-between hover:-translate-y-0.5 hover:shadow-2xl transition-all duration-300 animate-in fade-in duration-200"
               >
                 <div>
                   {/* Role Tag & Name */}
@@ -151,9 +150,7 @@ export default function TeamWorkloadPage() {
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-sm font-bold text-white shadow-md shadow-indigo-500/20">
-                      {member.name.substring(0, 2).toUpperCase()}
-                    </div>
+                    <Avatar name={member.name} size="xl" className="shadow-md shadow-indigo-500/20" />
                     <div className="min-w-0 flex-1">
                       <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 truncate">{member.name}</h3>
                       <p className="text-xs text-slate-400 truncate">{member.email}</p>
