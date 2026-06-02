@@ -24,7 +24,7 @@ export const projectApi = baseApi.injectEndpoints({
         method: 'PATCH',
         body: patch,
       }),
-      invalidatesTags: (result: any, error: any, { id }: any) => ['Project', { type: 'Project', id }, 'Activity'],
+      invalidatesTags: (result: any, error: any, arg: any) => ['Project', { type: 'Project', id: arg?.id }, 'Activity'],
     }),
     deleteProject: builder.mutation({
       query: ({ id, userName }: any) => ({

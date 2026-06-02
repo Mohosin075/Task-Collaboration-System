@@ -10,10 +10,16 @@ const validateRequest = (schema: AnyZodObject) => {
       params: req.params,
     });
     
-    // Assign validated data back to req to ensure type-safe request handling
-    req.body = parsed.body;
-    req.query = parsed.query;
-    req.params = parsed.params;
+    // Assign validated data back to req only if they exist in parsed schema
+    if (parsed.body !== undefined) {
+      req.body = parsed.body;
+    }
+    if (parsed.query !== undefined) {
+      req.query = parsed.query;
+    }
+    if (parsed.params !== undefined) {
+      req.params = parsed.params;
+    }
 
     next();
   });
