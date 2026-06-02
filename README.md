@@ -14,12 +14,30 @@ An enterprise-grade, real-time full-stack **Smart Project & Task Collaboration S
 - **Security**: Cryptographic salting (`bcrypt`) and JSON Web Token (`JWT`) authentication.
 - **Testing**: Automated Integration Tests with `Jest` & `Supertest`.
 
-### Frontend (Next.js 15)
+### Frontend (Next.js 15 Component-First Architecture)
 - **Framework**: React 19 & Next.js 15 (App Router).
 - **State Management**: Redux Toolkit (RTK Query) for API caching and Redux Persist for session caching.
 - **Styling**: Modern TailwindCSS with built-in Dark/Light theme toggle persistence.
 - **UI Elements**: Lucide React Icons & custom glassmorphic interfaces.
 - **Charts**: Recharts SVG engine for analytics rendering.
+- **Refactoring & Componentization**: Fully decoupled, modular layout architecture designed for maximum reusability and isolated state management.
+
+---
+
+## 💎 Frontend Component-First Design System
+
+We refactored monolithic Next.js pages into modular, atomic, and state-insulated reusable UI components under `src/components/`:
+
+### 📁 Shared Layout Hierarchy
+- **Auth Nested Layout (`(auth)/layout.tsx`)**: Unifies background gradients, card borders, typography, and glassmorphic blurs across `/login` and `/signup` pages, reducing HTML wrapper boilerplate code.
+- **Dashboard Layout (`DashboardLayout.tsx`)**: Houses the application shell, sidebar navigation, dark/light theme switcher, and responsive grid container.
+
+### 🧩 Reusable Presentation & Domain Components
+- **`Avatar.tsx`**: Standardized initials-based profile rendering with user-centric sizing, gradients, and fallback defaults.
+- **`TaskCard.tsx` / `TaskKanbanCard.tsx`**: Handles grid, list, and drag-and-drop kanban layouts. Supports RBAC status selection dropdowns and action buttons based on user permissions.
+- **`ProjectCard.tsx`**: Renders project detail cards, team member avatars, and completion progress bars calculated directly from tasks data.
+- **`TaskModal.tsx` / `ProjectModal.tsx`**: Encapsulates React state forms, date selectors, input validations, file uploads, subtask checklist builders, and RTK Query mutation actions.
+- **`TaskDrawer.tsx`**: A right-aligned discussion drawer for task overviews and comments. It initializes standalone, real-time Socket.IO room subscriptions to update the feed on incoming comments instantly.
 
 ---
 
@@ -64,7 +82,8 @@ The platform divides permissions into three distinct user roles:
 ├── frontend/                  # Frontend Next.js Client
 │   ├── src/
 │   │   ├── app/               # Next.js App Router (pages & assets)
-│   │   ├── components/        # Layout wrappers & Theme controllers
+│   │   │   └── (auth)/        # Nested Auth routes & Shared Layout
+│   │   ├── components/        # Reusable Modals, Cards, Avatars, Drawers & Layouts
 │   │   └── redux/             # RTK Query slices & Global Redux store
 │   ├── tsconfig.json          # TS config for bundler
 │   └── package.json
