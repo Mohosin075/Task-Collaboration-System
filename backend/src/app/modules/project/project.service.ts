@@ -1,5 +1,6 @@
 import { IProject } from './project.interface.js';
 import { Project } from './project.model.js';
+import { Task } from '../task/task.model.js';
 import { ActivityServices } from '../activity/activity.service.js';
 import AppError from '../../errors/AppError.js';
 import { Types } from 'mongoose';
@@ -20,7 +21,18 @@ const createProject = async (payload: IProject, userId: string, userName: string
 };
 
 const getProjects = async () => {
-  return await Project.find().populate('members', 'name email role');
+  const projects = await Project.find().populate('members', 'name email role');
+  return await Promise.all(
+    projects.map(async (project: any) => {
+      const totalTasks = await Task.countDocuments({ project: project._id });
+      const completedTasks = await Task.countDocuments({ project: project._id, status: 'Completed' });
+      return {
+        ...project.toObject(),
+        totalTasks,
+        completedTasks,
+      };
+    })
+  );
 };
 
 const getProjectById = async (id: string) => {

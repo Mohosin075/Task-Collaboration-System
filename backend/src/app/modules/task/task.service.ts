@@ -1,5 +1,6 @@
 import { ITask } from './task.interface.js';
 import { Task } from './task.model.js';
+import { Comment } from '../comment/comment.model.js';
 import { Project } from '../project/project.model.js';
 import { ActivityServices } from '../activity/activity.service.js';
 import AppError from '../../errors/AppError.js';
@@ -65,6 +66,16 @@ const getTasks = async (filter: Record<string, any> = {}, options: { page?: numb
   const total = await Task.countDocuments(filter);
   const data = await query;
 
+  const dataWithCommentsCount = await Promise.all(
+    data.map(async (task: any) => {
+      const commentCount = await Comment.countDocuments({ task: task._id });
+      return {
+        ...task.toObject(),
+        commentCount,
+      };
+    })
+  );
+
   return {
     meta: {
       page,
@@ -72,7 +83,7 @@ const getTasks = async (filter: Record<string, any> = {}, options: { page?: numb
       total,
       totalPage: Math.ceil(total / limit),
     },
-    data,
+    data: dataWithCommentsCount,
   };
 };
 
