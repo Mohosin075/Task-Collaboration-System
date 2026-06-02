@@ -2,7 +2,7 @@
 
 import React from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
-import { useGetWorkloadQuery } from '@/redux/api/authApi';
+import { useGetWorkloadQuery, useGetTeamMembersQuery } from '@/redux/api/authApi';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { Users2, CheckCircle2, AlertCircle, HelpCircle, Layers } from 'lucide-react';
@@ -10,12 +10,21 @@ import { Users2, CheckCircle2, AlertCircle, HelpCircle, Layers } from 'lucide-re
 export default function TeamWorkloadPage() {
   const auth = useSelector((state: RootState) => state.auth);
   
-  // Fetch workload details
-  const { data: workloadRes, isLoading } = useGetWorkloadQuery(undefined) as any;
-
   const isAuthorized = auth.user?.role === 'Admin' || auth.user?.role === 'Project Manager';
 
+  // Fetch workload details only if authorized
+  const { data: workloadRes, isLoading: workloadLoading } = useGetWorkloadQuery(undefined, {
+    skip: !isAuthorized,
+  }) as any;
+
+  // Fetch team members roster if not authorized
+  const { data: teamRes, isLoading: teamLoading } = useGetTeamMembersQuery(undefined, {
+    skip: isAuthorized,
+  }) as any;
+
+  const isLoading = isAuthorized ? workloadLoading : teamLoading;
   const workload = workloadRes?.data || [];
+  const team = teamRes?.data || [];
 
   return (
     <DashboardLayout>
@@ -43,14 +52,20 @@ export default function TeamWorkloadPage() {
 
         {/* Workload listing */}
         {isLoading ? (
-          <div className="text-center py-12 text-slate-500">Loading Workload Data...</div>
-        ) : workload.length === 0 ? (
+          <div className="text-center py-12 text-slate-500">Loading Team Data...</div>
+        ) : isAuthorized && workload.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 p-12 text-center bg-white dark:bg-slate-900">
             <Users2 className="mx-auto h-12 w-12 text-slate-400" />
             <h3 className="mt-4 text-lg font-bold">No active workload</h3>
             <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Add tasks and assign members to view workload metrics.</p>
           </div>
-        ) : (
+        ) : !isAuthorized && team.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 p-12 text-center bg-white dark:bg-slate-900">
+            <Users2 className="mx-auto h-12 w-12 text-slate-400" />
+            <h3 className="mt-4 text-lg font-bold">No team members found</h3>
+            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">There are no team members in the roster.</p>
+          </div>
+        ) : isAuthorized ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {workload.map((member: any) => {
               const workloadPercentage = member.totalTasks > 0
@@ -111,6 +126,28 @@ export default function TeamWorkloadPage() {
                 </div>
               );
             })}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {team.map((member: any) => (
+              <div
+                key={member._id}
+                className="rounded-2xl border border-white/50 dark:border-slate-800/40 bg-white/60 dark:bg-slate-900/40 backdrop-blur-md p-6 shadow-xl shadow-slate-100/50 dark:shadow-none flex flex-col justify-between hover:-translate-y-0.5 hover:shadow-2xl transition-all duration-300"
+              >
+                <div>
+                  {/* Role Tag & Name */}
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="inline-flex items-center rounded-full bg-slate-100 dark:bg-slate-800 px-2.5 py-0.5 text-xs font-bold text-slate-600 dark:text-slate-400">
+                      {member.role}
+                    </span>
+                    <Users2 className="h-4.5 w-4.5 text-indigo-500" />
+                  </div>
+
+                  <h3 className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">{member.name}</h3>
+                  <p className="text-xs text-slate-400 mt-1 truncate">{member.email}</p>
+                </div>
+              </div>
+            ))}
           </div>
         )}
 
