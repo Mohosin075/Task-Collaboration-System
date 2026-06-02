@@ -17,9 +17,13 @@ import {
   X,
   User,
   Activity,
+  Bell,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useDispatch, useSelector } from 'react-redux';
+import { io } from 'socket.io-client';
+import { useGetActivitiesQuery } from '@/redux/api/taskApi';
+import { toast } from 'sonner';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -34,9 +38,43 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
+  // Notifications states
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+
+  const { data: activitiesRes } = useGetActivitiesQuery(undefined, { skip: !auth.token }) as any;
+
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (activitiesRes?.data) {
+      setNotifications(activitiesRes.data);
+    }
+  }, [activitiesRes]);
+
+  // Real-time socket events for notifications
+  useEffect(() => {
+    if (!auth.token) return;
+
+    const socket = io('http://localhost:5000');
+
+    socket.on('new-activity', (newLog: any) => {
+      setNotifications((prev) => [newLog, ...prev.slice(0, 9)]);
+      if (newLog.user !== auth.user?._id) {
+        setUnreadCount((prev) => prev + 1);
+        toast.info(newLog.action, {
+          description: `By ${newLog.userName}`,
+        });
+      }
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [auth.token, auth.user?._id]);
 
   // Authenticate guard: redirect to /login if no session exists
   useEffect(() => {
@@ -176,6 +214,54 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           {/* Toolbar Actions */}
           <div className="flex items-center gap-4">
             
+            {/* Notification system */}
+            <div className="relative">
+              <button
+                onClick={() => {
+                  setNotificationsOpen(!notificationsOpen);
+                  setUnreadCount(0);
+                }}
+                className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800/80 cursor-pointer relative"
+              >
+                <Bell className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-[10px] font-bold text-white ring-2 ring-white dark:ring-slate-900">
+                    {unreadCount}
+                  </span>
+                )}
+              </button>
+
+              {/* Notification Dropdown panel */}
+              {notificationsOpen && (
+                <div className="absolute right-0 mt-2 w-80 rounded-2xl border border-white/50 dark:border-slate-800/60 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl shadow-2xl p-4 z-50 space-y-3">
+                  <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+                    <h4 className="font-bold text-sm">Notifications</h4>
+                    <button
+                      onClick={() => setNotifications([])}
+                      className="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+                    >
+                      Clear All
+                    </button>
+                  </div>
+                  <div className="max-h-60 overflow-y-auto space-y-3 pr-1">
+                    {notifications.length === 0 ? (
+                      <p className="text-xs text-slate-400 text-center py-4">No notifications yet.</p>
+                    ) : (
+                      notifications.map((notif: any, idx: number) => (
+                        <div key={notif._id || idx} className="text-xs border-b border-slate-100/50 dark:border-slate-800/50 pb-2 last:border-0 last:pb-0">
+                          <p className="font-semibold text-slate-900 dark:text-slate-200">{notif.userName}</p>
+                          <p className="text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">{notif.action}</p>
+                          <span className="text-[10px] text-slate-400 mt-1 block">
+                            {new Date(notif.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Theme toggle */}
             <button
               id="theme-toggle"

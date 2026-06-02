@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import app from './app.js';
 import config from './app/config/index.js';
 import { socketHelper } from './app/helpers/socketHelper.js';
+import seedAdmin from './app/DB/index.js';
 
 let server: HTTPServer;
 
@@ -11,6 +12,9 @@ async function bootstrap() {
     console.log('🔄 Connecting to MongoDB...');
     await mongoose.connect(config.mongo_uri);
     console.log('🚀 MongoDB Connected Successfully!');
+
+    // Seed default admin if none exists
+    await seedAdmin();
 
     // Initialize HTTP and Socket.IO servers
     server = new HTTPServer(app);

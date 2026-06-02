@@ -14,6 +14,7 @@ import {
   ListTodo,
   Star,
   Users2,
+  AlertCircle,
 } from 'lucide-react';
 import {
   BarChart,
@@ -69,6 +70,10 @@ export default function DashboardPage() {
   const pendingTasks = totalTasks - completedTasks;
   const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const overdueTasks = tasks.filter((t: any) => t.status !== 'Completed' && new Date(t.dueDate) < today).length;
+
   // Chart Data 1: Task Status Distribution
   const todoTasks = tasks.filter((t: any) => t.status === 'Todo').length;
   const inProgressTasks = tasks.filter((t: any) => t.status === 'In Progress').length;
@@ -114,7 +119,7 @@ export default function DashboardPage() {
         </div>
 
         {/* KPI Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
           
           <div className="rounded-2xl border border-white/50 dark:border-slate-800/40 bg-white/60 dark:bg-slate-900/40 backdrop-blur-md p-6 shadow-xl shadow-slate-100/50 dark:shadow-none flex items-center gap-4">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400">
@@ -127,12 +132,22 @@ export default function DashboardPage() {
           </div>
 
           <div className="rounded-2xl border border-white/50 dark:border-slate-800/40 bg-white/60 dark:bg-slate-900/40 backdrop-blur-md p-6 shadow-xl shadow-slate-100/50 dark:shadow-none flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400">
+              <ListTodo className="h-6 w-6" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Total Tasks</p>
+              <h3 className="text-2xl font-bold">{isLoading ? '...' : totalTasks}</h3>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-white/50 dark:border-slate-800/40 bg-white/60 dark:bg-slate-900/40 backdrop-blur-md p-6 shadow-xl shadow-slate-100/50 dark:shadow-none flex items-center gap-4">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400">
               <CheckSquare className="h-6 w-6" />
             </div>
             <div>
               <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Tasks Completed</p>
-              <h3 className="text-2xl font-bold">{isLoading ? '...' : `${completedTasks} / ${totalTasks}`}</h3>
+              <h3 className="text-2xl font-bold">{isLoading ? '...' : completedTasks}</h3>
             </div>
           </div>
 
@@ -147,12 +162,12 @@ export default function DashboardPage() {
           </div>
 
           <div className="rounded-2xl border border-white/50 dark:border-slate-800/40 bg-white/60 dark:bg-slate-900/40 backdrop-blur-md p-6 shadow-xl shadow-slate-100/50 dark:shadow-none flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400">
-              <TrendingUp className="h-6 w-6" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400">
+              <AlertCircle className="h-6 w-6" />
             </div>
             <div>
-              <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Completion Rate</p>
-              <h3 className="text-2xl font-bold">{isLoading ? '...' : `${completionRate}%`}</h3>
+              <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Overdue Tasks</p>
+              <h3 className="text-2xl font-bold">{isLoading ? '...' : overdueTasks}</h3>
             </div>
           </div>
 

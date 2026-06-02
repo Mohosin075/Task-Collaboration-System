@@ -10,4 +10,6 @@ export default {
   jwt_expires_in: process.env.JWT_EXPIRES_IN || '7d',
   bcrypt_salt_rounds: Number(process.env.BCRYPT_SALT_ROUNDS) || 12,
   node_env: process.env.NODE_ENV || 'development',
+  admin_email: process.env.ADMIN_EMAIL || 'admin@admin.com',
+  admin_password: process.env.ADMIN_PASSWORD || 'admin123456',
 };

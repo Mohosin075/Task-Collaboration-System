@@ -95,6 +95,7 @@ export default function TasksPage() {
   const [dueDateInput, setDueDateInput] = useState('');
   const [priorityInput, setPriorityInput] = useState<'High' | 'Medium' | 'Low'>('Medium');
   const [statusInput, setStatusInput] = useState<'Todo' | 'In Progress' | 'Completed'>('Todo');
+  const [attachmentInput, setAttachmentInput] = useState('');
 
   const isAuthorized = auth.user?.role === 'Admin' || auth.user?.role === 'Project Manager';
 
@@ -122,6 +123,18 @@ export default function TasksPage() {
     };
   }, [activeTaskForComments, refetch, refetchComments]);
 
+  const tasks = tasksRes?.data || [];
+
+  // Keep activeTaskForComments in sync with latest tasks data
+  useEffect(() => {
+    if (activeTaskForComments && tasks.length > 0) {
+      const updated = tasks.find((t: any) => t._id === activeTaskForComments._id);
+      if (updated) {
+        setActiveTaskForComments(updated);
+      }
+    }
+  }, [tasks, activeTaskForComments?._id]);
+
   const handleOpenCreate = () => {
     setEditingTask(null);
     setProjectInput(projectsRes?.data?.[0]?._id || '');
@@ -131,6 +144,7 @@ export default function TasksPage() {
     setDueDateInput('');
     setPriorityInput('Medium');
     setStatusInput('Todo');
+    setAttachmentInput('');
     setModalOpen(true);
   };
 
@@ -143,6 +157,7 @@ export default function TasksPage() {
     setDueDateInput(new Date(task.dueDate).toISOString().substring(0, 10));
     setPriorityInput(task.priority);
     setStatusInput(task.status);
+    setAttachmentInput(task.attachments?.[0] || '');
     setModalOpen(true);
   };
 
@@ -163,6 +178,7 @@ export default function TasksPage() {
           dueDate: dueDateInput,
           priority: priorityInput,
           status: statusInput,
+          attachments: attachmentInput ? [attachmentInput] : [],
           userName: auth.user?.name || 'User',
         }).unwrap();
         toast.success('Task updated successfully!');
@@ -175,6 +191,7 @@ export default function TasksPage() {
           dueDate: new Date(dueDateInput) as any,
           priority: priorityInput,
           status: statusInput,
+          attachments: attachmentInput ? [attachmentInput] : [],
           userName: auth.user?.name || 'User',
         }).unwrap();
         toast.success('Task created successfully!');
@@ -231,7 +248,6 @@ export default function TasksPage() {
     }
   };
 
-  const tasks = tasksRes?.data || [];
   const projects = projectsRes?.data || [];
   const team = teamRes?.data || [];
   const comments = commentsRes?.data || [];
@@ -484,10 +500,18 @@ export default function TasksPage() {
                         </span>
                       </div>
 
-                      {/* Comments counter */}
-                      <div className="flex items-center gap-1 text-[11px] text-slate-400">
-                        <MessageSquare className="h-3.5 w-3.5" />
-                        <span>Discuss</span>
+                      {/* Attachments & Comments counter */}
+                      <div className="flex items-center gap-3 text-[11px] text-slate-400">
+                        {task.attachments && task.attachments.length > 0 && (
+                          <div className="flex items-center gap-1" title={`${task.attachments.length} attachment(s)`}>
+                            <Paperclip className="h-3.5 w-3.5 text-indigo-500" />
+                            <span>{task.attachments.length}</span>
+                          </div>
+                        )}
+                        <div className="flex items-center gap-1">
+                          <MessageSquare className="h-3.5 w-3.5" />
+                          <span>Discuss</span>
+                        </div>
                       </div>
 
                     </div>
@@ -547,6 +571,17 @@ export default function TasksPage() {
                     value={descInput}
                     onChange={(e) => setDescInput(e.target.value)}
                     placeholder="Provide details about expectations, goals..."
+                    className="mt-1 block w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Attachment Link (e.g. Google Drive, Figma, Doc URL)</label>
+                  <input
+                    type="url"
+                    value={attachmentInput}
+                    onChange={(e) => setAttachmentInput(e.target.value)}
+                    placeholder="https://example.com/document"
                     className="mt-1 block w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
                   />
                 </div>
@@ -669,6 +704,28 @@ export default function TasksPage() {
                     </p>
                   </div>
                 </div>
+
+                {activeTaskForComments.attachments && activeTaskForComments.attachments.length > 0 && (
+                  <div>
+                    <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-1.5 flex items-center gap-1">
+                      <Paperclip className="h-3.5 w-3.5 text-indigo-500" /> Attachments
+                    </h4>
+                    <div className="space-y-1">
+                      {activeTaskForComments.attachments.map((link: string, idx: number) => (
+                        <a
+                          key={idx}
+                          href={link.startsWith('http') ? link : `https://${link}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 truncate font-medium"
+                        >
+                          <Paperclip className="h-3 w-3 shrink-0" />
+                          {link}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Comments Feed */}
