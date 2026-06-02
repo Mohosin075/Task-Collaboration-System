@@ -1,14 +1,22 @@
 import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
+import fs from 'fs';
+import path from 'path';
 import globalErrorHandler from './app/middlewares/globalErrorHandler.js';
 import router from './app/routes/index.js';
 
 const app: Application = express();
 
+// Ensure uploads directory exists
+if (!fs.existsSync('./uploads')) {
+  fs.mkdirSync('./uploads');
+}
+
 // Standard middlewares
 app.use(cors({ origin: '*' }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use('/uploads', express.static('uploads'));
 
 // Application routes
 app.use('/api/v1', router);
