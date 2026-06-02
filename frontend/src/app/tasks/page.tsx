@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import DashboardLayout from '@/components/DashboardLayout';
 import DatePicker from '@/components/DatePicker';
 import {
@@ -38,6 +39,8 @@ import { io } from 'socket.io-client';
 
 export default function TasksPage() {
   const auth = useSelector((state: RootState) => state.auth);
+  const searchParams = useSearchParams();
+  const queryTaskId = searchParams.get('taskId');
   
   // Search, Filters & Sorting state
   const [searchTerm, setSearchTerm] = useState('');
@@ -140,6 +143,16 @@ export default function TasksPage() {
       }
     }
   }, [tasks, activeTaskForComments?._id]);
+
+  // Handle auto-selecting task from query parameter
+  useEffect(() => {
+    if (queryTaskId && tasks.length > 0) {
+      const matched = tasks.find((t: any) => t._id === queryTaskId);
+      if (matched) {
+        setActiveTaskForComments(matched);
+      }
+    }
+  }, [queryTaskId, tasks]);
 
   const handleOpenCreate = () => {
     setEditingTask(null);
