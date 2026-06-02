@@ -110,7 +110,7 @@ export default function TasksPage() {
 
   // Socket IO for live comments & updates
   useEffect(() => {
-    const socket = io('http://localhost:5000');
+    const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000');
 
     // Register inside room
     if (activeTaskForComments) {
@@ -373,7 +373,7 @@ export default function TasksPage() {
 
     setIsFileUploading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/v1/upload', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1'}/upload`, {
         method: 'POST',
         body: formData,
       });

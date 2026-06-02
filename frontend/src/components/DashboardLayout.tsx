@@ -70,7 +70,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   useEffect(() => {
     if (!auth.token || !auth.user?._id) return;
 
-    const socket = io('http://localhost:5000');
+    const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000');
 
     socket.on(`notification-${auth.user._id}`, (newNotif: any) => {
       setNotifications((prev) => [newNotif, ...prev]);

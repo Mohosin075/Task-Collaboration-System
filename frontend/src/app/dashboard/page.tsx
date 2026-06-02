@@ -49,7 +49,7 @@ export default function DashboardPage() {
   }, [activitiesRes]);
 
   useEffect(() => {
-    const socket = io('http://localhost:5000');
+    const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000');
 
     socket.on('new-activity', (newLog: any) => {
       setLiveActivities((prev) => [newLog, ...prev.slice(0, 8)]);

@@ -56,7 +56,7 @@ export default function CalendarPage() {
 
   // Socket IO for live comments & updates
   useEffect(() => {
-    const socket = io('http://localhost:5000');
+    const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000');
 
     // Register inside room
     if (activeTaskForComments) {
