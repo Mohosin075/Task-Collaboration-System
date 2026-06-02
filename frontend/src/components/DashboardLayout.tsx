@@ -18,11 +18,17 @@ import {
   User,
   Activity,
   Bell,
+  Calendar,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useDispatch, useSelector } from 'react-redux';
 import { io } from 'socket.io-client';
-import { useGetActivitiesQuery } from '@/redux/api/taskApi';
+import {
+  useGetNotificationsQuery,
+  useMarkAllNotificationsReadMutation,
+  useMarkNotificationReadMutation,
+  useDeleteNotificationMutation,
+} from '@/redux/api/taskApi';
 import { toast } from 'sonner';
 
 interface DashboardLayoutProps {
@@ -43,33 +49,35 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [unreadCount, setUnreadCount] = useState(0);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
 
-  const { data: activitiesRes } = useGetActivitiesQuery(undefined, { skip: !auth.token }) as any;
+  const { data: notificationsRes, refetch: refetchNotifications } = useGetNotificationsQuery(undefined, { skip: !auth.token }) as any;
+  const [markAllRead] = useMarkAllNotificationsReadMutation();
+  const [markRead] = useMarkNotificationReadMutation();
+  const [deleteNotif] = useDeleteNotificationMutation();
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
   useEffect(() => {
-    if (activitiesRes?.data) {
-      setNotifications(activitiesRes.data);
-      setUnreadCount(activitiesRes.data.length);
+    if (notificationsRes?.data) {
+      setNotifications(notificationsRes.data);
+      const unreads = notificationsRes.data.filter((n: any) => !n.isRead).length;
+      setUnreadCount(unreads);
     }
-  }, [activitiesRes]);
+  }, [notificationsRes]);
 
   // Real-time socket events for notifications
   useEffect(() => {
-    if (!auth.token) return;
+    if (!auth.token || !auth.user?._id) return;
 
     const socket = io('http://localhost:5000');
 
-    socket.on('new-activity', (newLog: any) => {
-      setNotifications((prev) => [newLog, ...prev.slice(0, 9)]);
-      if (newLog.user !== auth.user?._id) {
-        setUnreadCount((prev) => prev + 1);
-        toast.info(newLog.action, {
-          description: `By ${newLog.userName}`,
-        });
-      }
+    socket.on(`notification-${auth.user._id}`, (newNotif: any) => {
+      setNotifications((prev) => [newNotif, ...prev]);
+      setUnreadCount((prev) => prev + 1);
+      toast.info(newNotif.action, {
+        description: newNotif.userName ? `By ${newNotif.userName}` : undefined,
+      });
     });
 
     return () => {
@@ -93,6 +101,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     { name: 'Projects', path: '/projects', icon: FolderKanban },
     { name: 'Tasks', path: '/tasks', icon: CheckSquare },
+    { name: 'Calendar', path: '/calendar', icon: Calendar },
     { name: 'Team Workload', path: '/team', icon: Users2 },
   ];
 
@@ -218,9 +227,16 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             {/* Notification system */}
             <div className="relative">
               <button
-                onClick={() => {
+                onClick={async () => {
                   setNotificationsOpen(!notificationsOpen);
-                  setUnreadCount(0);
+                  if (!notificationsOpen && unreadCount > 0) {
+                    try {
+                      await markAllRead(undefined).unwrap();
+                      refetchNotifications();
+                    } catch (err) {
+                      console.error(err);
+                    }
+                  }
                 }}
                 className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800/80 cursor-pointer relative"
               >
@@ -238,19 +254,43 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                   <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
                     <h4 className="font-bold text-sm">Notifications</h4>
                     <button
-                      onClick={() => setNotifications([])}
-                      className="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+                      onClick={async () => {
+                        try {
+                          await markAllRead(undefined).unwrap();
+                          refetchNotifications();
+                        } catch (err) {
+                          console.error(err);
+                        }
+                      }}
+                      className="text-xs text-indigo-500 hover:text-indigo-600 dark:text-indigo-400 cursor-pointer font-semibold"
                     >
-                      Clear All
+                      Mark all read
                     </button>
                   </div>
                   <div className="max-h-60 overflow-y-auto space-y-3 pr-1">
                     {notifications.length === 0 ? (
                       <p className="text-xs text-slate-400 text-center py-4">No notifications yet.</p>
                     ) : (
-                      notifications.map((notif: any, idx: number) => (
-                        <div key={notif._id || idx} className="text-xs border-b border-slate-100/50 dark:border-slate-800/50 pb-2 last:border-0 last:pb-0">
-                          <p className="font-semibold text-slate-900 dark:text-slate-200">{notif.userName}</p>
+                      notifications.map((notif: any) => (
+                        <div
+                          key={notif._id}
+                          onClick={async () => {
+                            if (!notif.isRead) {
+                              try {
+                                await markRead(notif._id).unwrap();
+                                refetchNotifications();
+                              } catch (err) {
+                                console.error(err);
+                              }
+                            }
+                          }}
+                          className={`text-xs border-b border-slate-100/50 dark:border-slate-800/50 pb-2 last:border-0 last:pb-0 cursor-pointer p-1 rounded transition-colors ${
+                            !notif.isRead ? 'bg-indigo-50/50 dark:bg-indigo-950/20' : 'hover:bg-slate-50 dark:hover:bg-slate-800/40'
+                          }`}
+                        >
+                          <p className="font-semibold text-slate-900 dark:text-slate-200">
+                            {notif.userName || 'System'} {!notif.isRead && <span className="inline-block h-1.5 w-1.5 rounded-full bg-indigo-500 ml-1" />}
+                          </p>
                           <p className="text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">{notif.action}</p>
                           <span className="text-[10px] text-slate-400 mt-1 block">
                             {new Date(notif.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}

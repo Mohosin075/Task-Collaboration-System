@@ -6,6 +6,7 @@ import { ProjectRoutes } from '../modules/project/project.routes.js';
 import { TaskRoutes } from '../modules/task/task.routes.js';
 import { CommentRoutes } from '../modules/comment/comment.routes.js';
 import { ActivityRoutes } from '../modules/activity/activity.routes.js';
+import { NotificationRoutes } from '../modules/notification/notification.routes.js';
 
 const router = Router();
 
@@ -42,6 +43,7 @@ const moduleRoutes = [
   { path: '/tasks', route: TaskRoutes },
   { path: '/comments', route: CommentRoutes },
   { path: '/activities', route: ActivityRoutes },
+  { path: '/notifications', route: NotificationRoutes },
 ];
 
 moduleRoutes.forEach((route) => router.use(route.path, route.route));

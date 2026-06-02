@@ -3,6 +3,7 @@ import { Task } from './task.model.js';
 import { Comment } from '../comment/comment.model.js';
 import { Project } from '../project/project.model.js';
 import { ActivityServices } from '../activity/activity.service.js';
+import { NotificationServices } from '../notification/notification.service.js';
 import AppError from '../../errors/AppError.js';
 import { Types } from 'mongoose';
 import { socketHelper } from '../../helpers/socketHelper.js';
@@ -37,6 +38,18 @@ const createTask = async (payload: ITask, userId: string, userName: string) => {
     task: result._id as any,
     taskTitle: result.title,
   });
+
+  // Trigger notification for task assignee if assigned to someone else
+  if (result.assignedTo && result.assignedTo.toString() !== userId) {
+    await NotificationServices.createNotification({
+      recipient: result.assignedTo,
+      sender: new Types.ObjectId(userId),
+      userName,
+      action: `assigned you a new task: "${result.title}" in project "${project.name}"`,
+      project: project._id as any,
+      task: result._id as any,
+    });
+  }
 
   // Emit real-time update to project room
   socketHelper.emitToRoom(payload.project.toString(), 'task-created', result);
@@ -138,6 +151,30 @@ const updateTask = async (
     new: true,
     runValidators: true,
   }).populate('assignedTo', 'name email role');
+
+  // Trigger notification if task is reassigned
+  if (payload.assignedTo && payload.assignedTo.toString() !== task.assignedTo?.toString()) {
+    await NotificationServices.createNotification({
+      recipient: new Types.ObjectId(payload.assignedTo),
+      sender: new Types.ObjectId(userId),
+      userName,
+      action: `reassigned you the task: "${task.title}" in project "${(task.project as any).name}"`,
+      project: task.project._id as any,
+      task: task._id as any,
+    });
+  }
+
+  // Trigger notification if status is updated by someone other than the assignee
+  if (payload.status && payload.status !== task.status && task.assignedTo && task.assignedTo.toString() !== userId) {
+    await NotificationServices.createNotification({
+      recipient: task.assignedTo as any,
+      sender: new Types.ObjectId(userId),
+      userName,
+      action: `marked your task "${task.title}" status as "${payload.status}"`,
+      project: task.project._id as any,
+      task: task._id as any,
+    });
+  }
 
   // Log activity
   await ActivityServices.logActivity({

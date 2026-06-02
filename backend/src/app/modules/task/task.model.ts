@@ -19,6 +19,12 @@ const taskSchema = new Schema<ITask>(
       default: 'Todo',
     },
     attachments: [{ type: String }],
+    subtasks: [
+      {
+        title: { type: String, required: true },
+        isCompleted: { type: Boolean, default: false },
+      },
+    ],
   },
   {
     timestamps: true,

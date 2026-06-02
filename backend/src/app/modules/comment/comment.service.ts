@@ -2,6 +2,7 @@ import { IComment } from './comment.interface.js';
 import { Comment } from './comment.model.js';
 import { Task } from '../task/task.model.js';
 import { ActivityServices } from '../activity/activity.service.js';
+import { NotificationServices } from '../notification/notification.service.js';
 import AppError from '../../errors/AppError.js';
 import { Types } from 'mongoose';
 import { socketHelper } from '../../helpers/socketHelper.js';
@@ -22,6 +23,18 @@ const addComment = async (payload: IComment, userId: string, userName: string) =
     task: task._id as any,
     taskTitle: task.title,
   });
+
+  // Trigger notification for task assignee if they are not the comment author
+  if (task.assignedTo && task.assignedTo.toString() !== userId) {
+    await NotificationServices.createNotification({
+      recipient: task.assignedTo,
+      sender: new Types.ObjectId(userId),
+      userName,
+      action: `commented on your task "${task.title}": "${payload.text.substring(0, 30)}${payload.text.length > 30 ? '...' : ''}"`,
+      project: task.project._id as any,
+      task: task._id as any,
+    });
+  }
 
   // Socket emit
   socketHelper.emitToRoom(task.project._id.toString(), 'new-comment', { taskId: task._id, comment: result });

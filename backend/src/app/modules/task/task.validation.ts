@@ -10,6 +10,11 @@ const createTaskSchema = z.object({
     priority: z.enum(['High', 'Medium', 'Low']).optional(),
     status: z.enum(['Todo', 'In Progress', 'Completed']).optional(),
     attachments: z.array(z.string()).optional(),
+    subtasks: z.array(z.object({
+      _id: z.string().optional(),
+      title: z.string(),
+      isCompleted: z.boolean().default(false),
+    })).optional(),
   }),
 });
 
@@ -23,6 +28,11 @@ const updateTaskSchema = z.object({
     priority: z.enum(['High', 'Medium', 'Low']).optional(),
     status: z.enum(['Todo', 'In Progress', 'Completed']).optional(),
     attachments: z.array(z.string()).optional(),
+    subtasks: z.array(z.object({
+      _id: z.string().optional(),
+      title: z.string(),
+      isCompleted: z.boolean(),
+    })).optional(),
   }),
 });
 

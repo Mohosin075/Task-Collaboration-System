@@ -54,6 +54,11 @@ export default function TasksPage() {
   // Page State
   const [page, setPage] = useState(1);
 
+  // Kanban & Subtask State
+  const [viewMode, setViewMode] = useState<'grid' | 'kanban'>('grid');
+  const [subtasksInput, setSubtasksInput] = useState<{ title: string; isCompleted: boolean }[]>([]);
+  const [newSubtaskTitle, setNewSubtaskTitle] = useState('');
+
   // Queries
   const { data: tasksRes, isLoading, refetch } = useGetTasksQuery({
     searchTerm,
@@ -146,6 +151,8 @@ export default function TasksPage() {
     setPriorityInput('Medium');
     setStatusInput('Todo');
     setAttachmentInput('');
+    setSubtasksInput([]);
+    setNewSubtaskTitle('');
     setModalOpen(true);
   };
 
@@ -159,6 +166,8 @@ export default function TasksPage() {
     setPriorityInput(task.priority);
     setStatusInput(task.status);
     setAttachmentInput(task.attachments?.[0] || '');
+    setSubtasksInput(task.subtasks || []);
+    setNewSubtaskTitle('');
     setModalOpen(true);
   };
 
@@ -180,6 +189,7 @@ export default function TasksPage() {
           priority: priorityInput,
           status: statusInput,
           attachments: attachmentInput ? [attachmentInput] : [],
+          subtasks: subtasksInput,
           userName: auth.user?.name || 'User',
         }).unwrap();
         toast.success('Task updated successfully!');
@@ -193,6 +203,7 @@ export default function TasksPage() {
           priority: priorityInput,
           status: statusInput,
           attachments: attachmentInput ? [attachmentInput] : [],
+          subtasks: subtasksInput,
           userName: auth.user?.name || 'User',
         }).unwrap();
         toast.success('Task created successfully!');
@@ -202,6 +213,100 @@ export default function TasksPage() {
       toast.error(err?.data?.message || 'Operation failed!');
     }
   };
+
+  // Drag and drop handlers
+  const onDragStart = (e: React.DragEvent, taskId: string) => {
+    e.dataTransfer.setData('taskId', taskId);
+  };
+
+  const onDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  const onDrop = async (e: React.DragEvent, newStatus: 'Todo' | 'In Progress' | 'Completed') => {
+    const taskId = e.dataTransfer.getData('taskId');
+    if (!taskId) return;
+    
+    const task = tasks.find((t: any) => t._id === taskId);
+    if (!task) return;
+    
+    if (task.status === newStatus) return;
+
+    await handleQuickStatusUpdate(task, newStatus);
+  };
+
+  const renderKanbanCard = (task: any) => {
+    const isAssignedToCurrentUser = task.assignedTo?._id === auth.user?._id;
+    return (
+      <div
+        key={task._id}
+        draggable
+        onDragStart={(e) => onDragStart(e, task._id)}
+        onClick={() => setActiveTaskForComments(task)}
+        className="group relative rounded-xl border border-white/50 dark:border-slate-800/40 bg-white/70 dark:bg-slate-900/60 backdrop-blur-md p-4 shadow hover:-translate-y-0.5 hover:shadow-lg transition-all duration-300 cursor-grab active:cursor-grabbing space-y-3"
+      >
+        <div className="flex items-center justify-between">
+          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest truncate max-w-[120px]">
+            {task.project?.name || 'Project'}
+          </span>
+          <span className={`inline-block h-1.5 w-1.5 rounded-full ${
+            task.priority === 'High' ? 'bg-rose-500' : task.priority === 'Medium' ? 'bg-amber-500' : 'bg-emerald-500'
+          }`} title={`${task.priority} Priority`} />
+        </div>
+        <div>
+          <h5 className="text-sm font-bold text-slate-900 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors leading-snug truncate">
+            {task.title}
+          </h5>
+          {task.description && (
+            <p className="text-slate-500 dark:text-slate-400 text-[11px] mt-1 line-clamp-2 leading-relaxed">
+              {task.description}
+            </p>
+          )}
+        </div>
+        
+        {/* Progress Bar for checklist */}
+        {task.subtasks && task.subtasks.length > 0 && (
+          <div className="pt-1">
+            <div className="flex items-center justify-between text-[9px] text-slate-400 mb-1 font-semibold">
+              <span>Subtasks</span>
+              <span>
+                {task.subtasks.filter((s: any) => s.isCompleted).length} / {task.subtasks.length}
+              </span>
+            </div>
+            <div className="h-1 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-indigo-500 transition-all duration-300"
+                style={{
+                  width: `${(task.subtasks.filter((s: any) => s.isCompleted).length / task.subtasks.length) * 100}%`
+                }}
+              />
+            </div>
+          </div>
+        )}
+
+        <div className="flex items-center justify-between border-t border-slate-100/50 dark:border-slate-800/20 pt-2.5">
+          <div className="flex items-center gap-1.5">
+            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-[9px] font-bold text-slate-600 dark:text-slate-400">
+              {task.assignedTo?.name?.substring(0, 2).toUpperCase() || 'NA'}
+            </div>
+            <span className="text-[10px] font-medium text-slate-600 dark:text-slate-300 truncate max-w-[80px]">
+              {isAssignedToCurrentUser ? 'You' : task.assignedTo?.name || 'Unassigned'}
+            </span>
+          </div>
+          <div className="flex items-center gap-2 text-[10px] text-slate-400">
+            {task.attachments && task.attachments.length > 0 && (
+              <Paperclip className="h-3 w-3 text-indigo-500" />
+            )}
+            <div className="flex items-center gap-0.5">
+              <MessageSquare className="h-3 w-3" />
+              <span>{task.commentCount || 0}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
 
   const handleQuickStatusUpdate = async (task: any, newStatus: any) => {
     // Non-Admin/PM members can only update status on tasks assigned to them
@@ -301,20 +406,49 @@ export default function TasksPage() {
       <div className="space-y-8">
         
         {/* Page header and CTA */}
-        <div className="flex items-center justify-between">
-          <div>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-4 flex-wrap">
             <h1 className="text-3xl font-bold tracking-tight">Tasks</h1>
-            <p className="text-slate-500 dark:text-slate-400 mt-1">Assign, search, filter, and double-click to cycle task status.</p>
+            
+            {/* View Mode Switcher */}
+            <div className="flex bg-slate-100 dark:bg-slate-800/40 p-1 rounded-xl border border-slate-200/50 dark:border-slate-800/80">
+              <button
+                type="button"
+                onClick={() => setViewMode('grid')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  viewMode === 'grid'
+                    ? 'bg-white dark:bg-slate-950 text-indigo-600 dark:text-indigo-400 shadow-sm'
+                    : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+                }`}
+              >
+                List Grid
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('kanban')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  viewMode === 'kanban'
+                    ? 'bg-white dark:bg-slate-950 text-indigo-600 dark:text-indigo-400 shadow-sm'
+                    : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+                }`}
+              >
+                Kanban Board
+              </button>
+            </div>
           </div>
-          {isAuthorized && (
-            <button
-              onClick={handleOpenCreate}
-              className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-3 rounded-xl text-sm font-semibold shadow-md shadow-indigo-600/10 cursor-pointer transition-all"
-            >
-              <Plus className="h-5 w-5" />
-              New Task
-            </button>
-          )}
+          
+          <div className="flex items-center gap-3">
+            {isAuthorized && (
+              <button
+                type="button"
+                onClick={handleOpenCreate}
+                className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-3 rounded-xl text-sm font-semibold shadow-md shadow-indigo-600/10 cursor-pointer transition-all"
+              >
+                <Plus className="h-5 w-5" />
+                New Task
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Filter panel */}
@@ -432,7 +566,7 @@ export default function TasksPage() {
 
         </div>
 
-        {/* Task Grid rendering */}
+        {/* Task Grid & Kanban Board rendering */}
         {isLoading ? (
           <div className="text-center py-12 text-slate-500">Loading Tasks...</div>
         ) : tasks.length === 0 ? (
@@ -440,6 +574,82 @@ export default function TasksPage() {
             <Clock className="mx-auto h-12 w-12 text-slate-400" />
             <h3 className="mt-4 text-lg font-bold">No tasks matched</h3>
             <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Try adjusting your filters or search terms.</p>
+          </div>
+        ) : viewMode === 'kanban' ? (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            {/* Todo Column */}
+            <div
+              onDragOver={onDragOver}
+              onDrop={(e) => onDrop(e, 'Todo')}
+              className="bg-slate-50/50 dark:bg-slate-950/20 rounded-2xl border border-slate-200/40 dark:border-slate-800/40 p-4 space-y-4 min-h-[400px]"
+            >
+              <div className="flex items-center justify-between border-b border-slate-200/40 dark:border-slate-800/40 pb-2">
+                <span className="text-sm font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                  <span className="h-2.5 w-2.5 rounded-full bg-indigo-500" />
+                  Todo
+                </span>
+                <span className="text-xs bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 px-2 py-0.5 rounded font-bold">
+                  {tasks.filter((t: any) => t.status === 'Todo').length}
+                </span>
+              </div>
+              <div className="space-y-4 overflow-y-auto max-h-[70vh] pr-1">
+                {tasks.filter((t: any) => t.status === 'Todo').length === 0 ? (
+                  <p className="text-xs text-slate-400 text-center py-6">Drag tasks here</p>
+                ) : (
+                  tasks.filter((t: any) => t.status === 'Todo').map((task: any) => renderKanbanCard(task))
+                )}
+              </div>
+            </div>
+
+            {/* In Progress Column */}
+            <div
+              onDragOver={onDragOver}
+              onDrop={(e) => onDrop(e, 'In Progress')}
+              className="bg-slate-50/50 dark:bg-slate-950/20 rounded-2xl border border-slate-200/40 dark:border-slate-800/40 p-4 space-y-4 min-h-[400px]"
+            >
+              <div className="flex items-center justify-between border-b border-slate-200/40 dark:border-slate-800/40 pb-2">
+                <span className="text-sm font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                  <span className="h-2.5 w-2.5 rounded-full bg-amber-500" />
+                  In Progress
+                </span>
+                <span className="text-xs bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded font-bold">
+                  {tasks.filter((t: any) => t.status === 'In Progress').length}
+                </span>
+              </div>
+              <div className="space-y-4 overflow-y-auto max-h-[70vh] pr-1">
+                {tasks.filter((t: any) => t.status === 'In Progress').length === 0 ? (
+                  <p className="text-xs text-slate-400 text-center py-6">Drag tasks here</p>
+                ) : (
+                  tasks.filter((t: any) => t.status === 'In Progress').map((task: any) => renderKanbanCard(task))
+                )}
+              </div>
+            </div>
+
+            {/* Completed Column */}
+            <div
+              onDragOver={onDragOver}
+              onDrop={(e) => onDrop(e, 'Completed')}
+              className="bg-slate-50/50 dark:bg-slate-950/20 rounded-2xl border border-slate-200/40 dark:border-slate-800/40 p-4 space-y-4 min-h-[400px]"
+            >
+              <div className="flex items-center justify-between border-b border-slate-200/40 dark:border-slate-800/40 pb-2">
+                <span className="text-sm font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
+                  Completed
+                </span>
+                <span className="text-xs bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded font-bold">
+                  {tasks.filter((t: any) => t.status === 'Completed').length}
+                </span>
+              </div>
+              <div className="space-y-4 overflow-y-auto max-h-[70vh] pr-1">
+                {tasks.filter((t: any) => t.status === 'Completed').length === 0 ? (
+                  <p className="text-xs text-slate-400 text-center py-6">Drag tasks here</p>
+                ) : (
+                  tasks.filter((t: any) => t.status === 'Completed').map((task: any) => renderKanbanCard(task))
+                )}
+              </div>
+            </div>
+
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -510,6 +720,26 @@ export default function TasksPage() {
                       {task.description || 'No description provided.'}
                     </p>
                   </div>
+
+                  {/* Progress Bar for checklist */}
+                  {task.subtasks && task.subtasks.length > 0 && (
+                    <div className="mt-4 pt-2">
+                      <div className="flex items-center justify-between text-[10px] text-slate-400 mb-1 font-semibold">
+                        <span>Subtasks checklist progress</span>
+                        <span>
+                          {task.subtasks.filter((s: any) => s.isCompleted).length} / {task.subtasks.length}
+                        </span>
+                      </div>
+                      <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-indigo-500 transition-all duration-300"
+                          style={{
+                            width: `${(task.subtasks.filter((s: any) => s.isCompleted).length / task.subtasks.length) * 100}%`
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
 
                   <div className="border-t border-slate-100 dark:border-slate-800/80 mt-6 pt-4 space-y-3">
                     
@@ -747,6 +977,51 @@ export default function TasksPage() {
                   </div>
                 </div>
 
+                {/* Subtask editing in form */}
+                <div className="border-t border-slate-100 dark:border-slate-800/80 pt-4">
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Checklist / Subtasks</label>
+                  <div className="flex gap-2 mb-2">
+                    <input
+                      type="text"
+                      placeholder="Add subtask title..."
+                      value={newSubtaskTitle}
+                      onChange={(e) => setNewSubtaskTitle(e.target.value)}
+                      className="flex-1 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 px-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!newSubtaskTitle.trim()) return;
+                        setSubtasksInput([...subtasksInput, { title: newSubtaskTitle.trim(), isCompleted: false }]);
+                        setNewSubtaskTitle('');
+                      }}
+                      className="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-xl text-xs font-semibold cursor-pointer"
+                    >
+                      Add
+                    </button>
+                  </div>
+                  <div className="space-y-1.5 max-h-32 overflow-y-auto pr-1">
+                    {subtasksInput.length === 0 ? (
+                      <p className="text-xs text-slate-400">No subtasks added yet.</p>
+                    ) : (
+                      subtasksInput.map((sub, idx) => (
+                        <div key={idx} className="flex items-center justify-between text-xs bg-slate-50 dark:bg-slate-950/40 p-2 rounded-xl border border-slate-100 dark:border-slate-800/40">
+                          <span className="truncate">{sub.title}</span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSubtasksInput(subtasksInput.filter((_, i) => i !== idx));
+                            }}
+                            className="text-rose-500 hover:text-rose-600 font-bold cursor-pointer"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+
                 <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
                   <button
                     type="button"
@@ -811,6 +1086,53 @@ export default function TasksPage() {
                     <p className="font-medium text-slate-700 dark:text-slate-300">
                       {new Date(activeTaskForComments.dueDate).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}
                     </p>
+                  </div>
+                </div>
+
+                {/* Subtasks checklist inside drawer */}
+                <div className="border-t border-slate-100 dark:border-slate-800/80 pt-4">
+                  <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-2 flex items-center justify-between">
+                    <span>Subtasks Checklist</span>
+                    <span className="text-[10px] bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 px-2 py-0.5 rounded font-bold">
+                      {activeTaskForComments.subtasks?.filter((s: any) => s.isCompleted).length || 0} / {activeTaskForComments.subtasks?.length || 0}
+                    </span>
+                  </h4>
+                  <div className="space-y-2 mt-2 max-h-40 overflow-y-auto pr-1">
+                    {(!activeTaskForComments.subtasks || activeTaskForComments.subtasks.length === 0) ? (
+                      <p className="text-xs text-slate-400">No subtasks created.</p>
+                    ) : (
+                      activeTaskForComments.subtasks.map((sub: any) => (
+                        <label
+                          key={sub._id}
+                          className="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-950/40 p-1.5 rounded cursor-pointer border border-slate-100/50 dark:border-slate-800/40 transition-colors"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={sub.isCompleted}
+                            disabled={auth.user?.role === 'Team Member' && activeTaskForComments.assignedTo?._id !== auth.user?._id && activeTaskForComments.assignedTo !== auth.user?._id}
+                            onChange={async (e) => {
+                              const updatedSubtasks = activeTaskForComments.subtasks.map((s: any) =>
+                                s._id === sub._id ? { ...s, isCompleted: e.target.checked } : s
+                              );
+                              try {
+                                await updateTask({
+                                  id: activeTaskForComments._id,
+                                  subtasks: updatedSubtasks,
+                                  userName: auth.user?.name || 'User',
+                                }).unwrap();
+                                toast.success('Subtask status updated!');
+                              } catch (err: any) {
+                                toast.error(err?.data?.message || 'Failed to update subtask');
+                              }
+                            }}
+                            className="rounded border-slate-300 dark:border-slate-700 text-indigo-600 focus:ring-indigo-500"
+                          />
+                          <span className={sub.isCompleted ? 'line-through text-slate-400' : ''}>
+                            {sub.title}
+                          </span>
+                        </label>
+                      ))
+                    )}
                   </div>
                 </div>
 

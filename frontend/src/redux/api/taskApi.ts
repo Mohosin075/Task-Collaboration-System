@@ -49,6 +49,31 @@ export const taskApi = baseApi.injectEndpoints({
       query: () => '/activities/recent',
       providesTags: ['Activity'],
     }),
+    getNotifications: builder.query({
+      query: () => '/notifications',
+      providesTags: ['Notification'],
+    }),
+    markAllNotificationsRead: builder.mutation({
+      query: () => ({
+        url: '/notifications/mark-all-read',
+        method: 'PATCH',
+      }),
+      invalidatesTags: ['Notification'],
+    }),
+    markNotificationRead: builder.mutation({
+      query: (id: string) => ({
+        url: `/notifications/${id}/read`,
+        method: 'PATCH',
+      }),
+      invalidatesTags: ['Notification'],
+    }),
+    deleteNotification: builder.mutation({
+      query: (id: string) => ({
+        url: `/notifications/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Notification'],
+    }),
   }),
 });
 
@@ -60,4 +85,8 @@ export const {
   useGetCommentsQuery,
   useAddCommentMutation,
   useGetActivitiesQuery,
+  useGetNotificationsQuery,
+  useMarkAllNotificationsReadMutation,
+  useMarkNotificationReadMutation,
+  useDeleteNotificationMutation,
 } = taskApi;
