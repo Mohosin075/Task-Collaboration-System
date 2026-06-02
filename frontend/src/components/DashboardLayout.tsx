@@ -120,7 +120,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       <aside className="hidden md:flex md:w-64 md:flex-col bg-white/70 dark:bg-slate-900/60 backdrop-blur-lg border-r border-slate-200/60 dark:border-slate-800/50">
         <div className="flex h-16 items-center px-6 border-b border-slate-200 dark:border-slate-800">
           <Activity className="h-6 w-6 text-indigo-500 mr-2" />
-          <span className="text-lg font-bold tracking-tight bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">Smart Work</span>
+          <span className="text-lg font-bold tracking-tight bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">Smart Collaboration</span>
         </div>
         <nav className="flex-1 space-y-1 px-4 py-6">
           {navItems.map((item) => {
@@ -164,7 +164,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             <div className="flex h-16 items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800">
               <div className="flex items-center">
                 <Activity className="h-6 w-6 text-indigo-500 mr-2" />
-                <span className="text-lg font-bold tracking-tight bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">Smart Work</span>
+                <span className="text-lg font-bold tracking-tight bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">Smart Collaboration</span>
               </div>
               <button onClick={() => setSidebarOpen(false)} className="p-2 text-slate-500 dark:text-slate-400">
                 <X className="h-6 w-6" />
